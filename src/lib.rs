@@ -102,8 +102,15 @@ pub struct FinalFieldInfo {
 }
 
 #[derive(Deserialize)]
+pub struct PreviousFieldInfo {
+    pub Balance: Option<Balance>,
+    pub Sequence: Option<BigDecimal>,
+}
+
+#[derive(Deserialize)]
 pub struct ModifiedNodeInfo {
     pub FinalFields: FinalFieldInfo,
+    pub PreviousFields: Option<PreviousFieldInfo>, // is this really optional ???
     pub LedgerEntryType: String,
     pub LedgerIndex: String,
     pub PreviousTxnID: Option<String>,
