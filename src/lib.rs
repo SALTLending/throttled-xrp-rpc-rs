@@ -3,7 +3,18 @@
 #[macro_use]
 extern crate throttled_json_rpc;
 
-use num_bigint::BigInt;
+use bigdecimal::BigDecimal;
+
+#[derive(Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum Balance {
+    XRP(BigDecimal),
+    Other {
+        currency: String,
+        issuer: String,
+        value: BigDecimal,
+    },
+}
 
 #[derive(Serialize)]
 pub struct AccountParams<'a, 'b> {
@@ -34,7 +45,7 @@ pub enum LedgerEntryType {
 #[derive(Deserialize)]
 pub struct AccountData {
     pub Account: String,
-    pub Balance: BigInt,
+    pub Balance: BigDecimal,
     pub Flags: usize,
     pub LedgerEntryType: LedgerEntryType,
     pub OwnerCount: usize,
@@ -48,9 +59,9 @@ pub struct AccountData {
 pub struct QueuedTransaction {
     pub LastLedgerSequence: Option<usize>,
     pub auth_change: bool,
-    pub fee: BigInt,
-    pub fee_level: BigInt,
-    pub max_spend_drops: BigInt,
+    pub fee: BigDecimal,
+    pub fee_level: BigDecimal,
+    pub max_spend_drops: BigDecimal,
     pub seq: usize,
 }
 
@@ -59,7 +70,7 @@ pub struct QueueData {
     pub auth_change_queued: bool,
     pub highest_sequence: usize,
     pub lowest_sequence: usize,
-    pub max_spend_drops_total: BigInt,
+    pub max_spend_drops_total: BigDecimal,
     pub transactions: Vec<QueuedTransaction>,
     pub txn_count: usize,
 }
@@ -74,15 +85,7 @@ pub struct AccountInfo {
 }
 
 #[derive(Deserialize)]
-pub struct AmountInfo {
-    currency: String,
-    issuer: String,
-    value: usize,
-}
-
-#[derive(Deserialize)]
 pub struct PathInfo {
-    account: String,
     currency: String,
     issuer: String,
     r#type: usize,
@@ -99,15 +102,9 @@ pub struct SendMaxInfo {
 #[derive(Deserialize)]
 pub struct FinalFieldInfo {
     Account: String,
-    Balance: f64,
+    Balance: Balance,
     Flags: isize,
     OwnerCount: usize,
-    Sequence: usize,
-}
-
-#[derive(Deserialize)]
-pub struct PreviousFieldInfo {
-    Balance: f64,
     Sequence: usize,
 }
 
@@ -116,7 +113,6 @@ pub struct ModifiedNodeInfo {
     FinalFields: FinalFieldInfo,
     LedgerEntryType: String,
     LedgerIndex: String,
-    PreviousFields: PreviousFieldInfo,
     PreviousTxnID: String,
     PreviousTxnLgrSeq: usize,
 }
@@ -136,7 +132,7 @@ pub struct MetaTxInfo {
 #[derive(Deserialize)]
 pub struct TransactionInfo {
     Account: String,
-    Amount: AmountInfo,
+    Amount: Balance,
     Destination: String,
     Fee: usize,
     Flags: isize,
