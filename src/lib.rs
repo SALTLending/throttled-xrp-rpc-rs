@@ -26,15 +26,15 @@ pub struct AccountParams<'a, 'b> {
 
 #[derive(Serialize)]
 pub struct LedgerParams {
-    ledger_hash: Option<String>,
-    ledger_index: Option<String>,
-    full: Option<bool>,
-    accounts: Option<bool>,
-    transactions: Option<bool>,
-    expand: Option<bool>,
-    owner_funds: Option<bool>,
-    binary: Option<bool>,
-    queue: Option<bool>,
+    pub ledger_hash: Option<String>,
+    pub ledger_index: Option<String>,
+    pub full: Option<bool>,
+    pub accounts: Option<bool>,
+    pub transactions: Option<bool>,
+    pub expand: Option<bool>,
+    pub owner_funds: Option<bool>,
+    pub binary: Option<bool>,
+    pub queue: Option<bool>,
 }
 
 #[derive(Deserialize)]
@@ -77,98 +77,98 @@ pub struct QueueData {
 
 #[derive(Deserialize)]
 pub struct AccountInfo {
-    account_data: AccountData,
-    ledger_current_index: BigDecimal,
-    queue_data: Option<QueueData>,
-    status: String,
-    validated: bool,
+    pub account_data: AccountData,
+    pub ledger_current_index: BigDecimal,
+    pub queue_data: Option<QueueData>,
+    pub status: String,
+    pub validated: bool,
 }
 
 #[derive(Deserialize)]
 pub struct PathInfo {
-    currency: String,
-    issuer: Option<String>,
+    pub currency: String,
+    pub issuer: Option<String>,
     #[serde(rename = "type")]
-    currency_type: BigDecimal,
-    type_hex: String
+    pub currency_type: BigDecimal,
+    pub type_hex: String
 }
 
 #[derive(Deserialize)]
 pub struct FinalFieldInfo {
-    Balance: Option<Balance>,
-    Flags: isize,
-    OwnerCount: Option<BigDecimal>,
-    Sequence: Option<BigDecimal>,
+    pub Balance: Option<Balance>,
+    pub Flags: isize,
+    pub OwnerCount: Option<BigDecimal>,
+    pub Sequence: Option<BigDecimal>,
 }
 
 #[derive(Deserialize)]
 pub struct ModifiedNodeInfo {
-    FinalFields: FinalFieldInfo,
-    LedgerEntryType: String,
-    LedgerIndex: String,
-    PreviousTxnID: Option<String>,
-    PreviousTxnLgrSeq: Option<BigDecimal>,
+    pub FinalFields: FinalFieldInfo,
+    pub LedgerEntryType: String,
+    pub LedgerIndex: String,
+    pub PreviousTxnID: Option<String>,
+    pub PreviousTxnLgrSeq: Option<BigDecimal>,
 }
 
 #[derive(Deserialize)]
 pub struct AffectedNodeInfo {
-    ModifiedNode: Option<ModifiedNodeInfo>,
+    pub ModifiedNode: Option<ModifiedNodeInfo>,
 }
 
 #[derive(Deserialize)]
 pub struct MetaTxInfo {
-    AffectedNodes: Vec<AffectedNodeInfo>,
-    TransactionIndex: BigDecimal,
-    TransactionResult: String,
+    pub AffectedNodes: Vec<AffectedNodeInfo>,
+    pub TransactionIndex: BigDecimal,
+    pub TransactionResult: String,
 }
 
 #[derive(Deserialize)]
 pub struct TransactionInfo {
-    Account: String,
-    Amount: Option<Balance>,
-    Destination: Option<String>,
-    Fee: BigDecimal,
-    Flags: isize,
-    Paths: Option<Vec<Vec<PathInfo>>>,
-    SendMax: Option<Balance>,
-    Sequence: BigDecimal,
-    SigningPubKey: String,
-    TransactionType: String,
-    TxnSignature: String,
-    hash: String,
-    LedgerIndex: Option<String>,
-    metaData: MetaTxInfo,
-    validated: Option<bool> //option of a bool???
+    pub Account: String,
+    pub Amount: Option<Balance>,
+    pub Destination: Option<String>,
+    pub Fee: BigDecimal,
+    pub Flags: isize,
+    pub Paths: Option<Vec<Vec<PathInfo>>>,
+    pub SendMax: Option<Balance>,
+    pub Sequence: BigDecimal,
+    pub SigningPubKey: String,
+    pub TransactionType: String,
+    pub TxnSignature: String,
+    pub hash: String,
+    pub LedgerIndex: Option<String>,
+    pub metaData: MetaTxInfo,
+    pub validated: Option<bool> //option of a bool???
 }
 
 #[derive(Deserialize)]
 pub struct NestedLedgerInfo {
-    accepted: bool,
-    account_hash: String,
-    close_flags: isize,
-    close_time: BigDecimal,
-    close_time_human: String,
-    close_time_resolution: BigDecimal,
-    closed: bool,
-    hash: String,
-    ledger_hash: String,
-    ledger_index: String,
-    parent_close_time: BigDecimal,
-    parent_hash: String,
-    seqNum: String,
-    totalCoins: String,
-    total_coins: BigDecimal,
-    transaction_hash: String,
-    transactions: Option<Vec<TransactionInfo>>,
+    pub accepted: bool,
+    pub account_hash: String,
+    pub close_flags: isize,
+    pub close_time: BigDecimal,
+    pub close_time_human: String,
+    pub close_time_resolution: BigDecimal,
+    pub closed: bool,
+    pub hash: String,
+    pub ledger_hash: String,
+    pub ledger_index: String,
+    pub parent_close_time: BigDecimal,
+    pub parent_hash: String,
+    pub seqNum: String,
+    pub totalCoins: String,
+    pub total_coins: BigDecimal,
+    pub transaction_hash: String,
+    pub transactions: Option<Vec<TransactionInfo>>,
 }
 
 #[derive(Deserialize)]
 pub struct LedgerInfo {
-    ledger: NestedLedgerInfo,
-    ledger_hash: String,
-    ledger_index: BigDecimal,
-    status: String,
-    validated: bool,
+    pub ledger: NestedLedgerInfo,
+    pub ledger_hash: String,
+    pub ledger_index: BigDecimal,
+    pub status: String,
+    pub validated: bool,
 }
 
 jsonrpc_client!(pub struct XRPClient {
