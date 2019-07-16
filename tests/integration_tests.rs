@@ -6,7 +6,7 @@ use throttled_xrp_rpc::{AccountParams, LedgerIndex, XRPClient};
 const URL: &'static str = "https://s1.ripple.com:51234/";
 #[test]
 fn account_info_tests() {
-    let bitpay_account_id = "r9HwsqBnAUN4nF6nDqxd4sgP8DrDnDcZP3";
+    let bitpay_account_id = "r9HwsqBnAUN4nF6nDqxd4sgP8DrDnDcZP3".parse().unwrap();
     let client = reqwest::Client::new();
 
     let account_params = AccountParams {

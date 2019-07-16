@@ -4,6 +4,7 @@
 extern crate throttled_json_rpc;
 
 use bigdecimal::BigDecimal;
+use std::str::FromStr;
 
 #[derive(Serialize, Deserialize)]
 #[serde(untagged)]
@@ -16,9 +17,42 @@ pub enum Balance {
     },
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+/**
+* Starts with r
+* Length is 25-35 chars in length
+* 1: https://xrpl.org/basic-data-types.html#addresses
+*/
+pub struct Account(String);
+
+fn account_validate(s: &str) -> Result<String, String> {
+    const MIN_LENGTH: usize = 25;
+    const MAX_LENGTH: usize = 35;
+    if s.len() < MIN_LENGTH {
+        return Err(format!("{:?} is shorter than {} chars ", s, MIN_LENGTH));
+    }
+    if let Some(first_char) = s.chars().nth(0) {
+        if first_char != 'r' {
+            return Err(format!("{:?} does not start with r", s));
+        }
+    }
+    if s.len() > MAX_LENGTH {
+        return Err(format!("{:?} is longer than {} chars ", s, MAX_LENGTH));
+    }
+    Ok(s.into())
+}
+
+impl FromStr for Account {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        account_validate(s).map(|account| Account(account))
+    }
+}
+
 #[derive(Serialize, Debug, Clone)]
 pub struct AccountParams<'a> {
-    pub account: &'a str,
+    pub account: &'a Account,
     pub strict: bool,
 
     #[serde(flatten)]
