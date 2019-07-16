@@ -16,11 +16,13 @@ pub enum Balance {
     },
 }
 
-#[derive(Serialize)]
-pub struct AccountParams<'a, 'b> {
+#[derive(Serialize, Debug, Clone)]
+pub struct AccountParams<'a> {
     pub account: &'a str,
     pub strict: bool,
-    pub ledger_index: &'b str,
+
+    #[serde(flatten)]
+    pub ledger_index: LedgerIndex,
     pub queue: bool,
 }
 
@@ -37,12 +39,12 @@ pub struct LedgerParams {
     pub queue: Option<bool>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub enum LedgerEntryType {
     AccountRoot, // WHY DOES THIS EVEN EXIST???
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct AccountData {
     pub Account: String,
     pub Balance: BigDecimal,
@@ -55,7 +57,7 @@ pub struct AccountData {
     pub index: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct QueuedTransaction {
     pub LastLedgerSequence: Option<BigDecimal>,
     pub auth_change: bool,
@@ -65,7 +67,7 @@ pub struct QueuedTransaction {
     pub seq: BigDecimal,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct QueueData {
     pub auth_change_queued: bool,
     pub highest_sequence: BigDecimal,
@@ -75,13 +77,37 @@ pub struct QueueData {
     pub txn_count: BigDecimal,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
+pub enum LedgerIndex {
+    Current { ledger_current_index: BigDecimal },
+    Number { ledger_index: serde_json::Number },
+    StrValue { ledger_index: String },
+}
+
+#[derive(Deserialize, Debug)]
 pub struct AccountInfo {
     pub account_data: AccountData,
-    pub ledger_current_index: BigDecimal,
-    pub queue_data: Option<QueueData>,
+    pub queue_data: Option<LaziedQueueData>,
     pub status: String,
-    pub validated: bool,
+    pub validated: Option<bool>,
+
+    #[serde(flatten)]
+    pub ledger_index: LedgerIndex,
+}
+
+/**
+ *  Some fields may be omitted because the values are calculated "lazily" by the queuing mechanism. [1]
+ * 1: https://xrpl.org/account_info.html
+ */
+#[derive(Deserialize, Debug)]
+pub struct LaziedQueueData {
+    pub auth_change_queued: Option<bool>,
+    pub highest_sequence: Option<BigDecimal>,
+    pub lowest_sequence: Option<BigDecimal>,
+    pub max_spend_drops_total: Option<BigDecimal>,
+    pub transactions: Option<Vec<QueuedTransaction>>,
+    pub txn_count: Option<BigDecimal>,
 }
 
 #[derive(Deserialize)]
@@ -90,7 +116,7 @@ pub struct PathInfo {
     pub issuer: Option<String>,
     #[serde(rename = "type")]
     pub currency_type: BigDecimal,
-    pub type_hex: String
+    pub type_hex: String,
 }
 
 #[derive(Deserialize)]
@@ -145,7 +171,7 @@ pub struct TransactionInfo {
     pub hash: String,
     pub LedgerIndex: Option<String>,
     pub metaData: MetaTxInfo,
-    pub validated: Option<bool> //option of a bool???
+    pub validated: Option<bool>, //option of a bool???
 }
 
 #[derive(Deserialize)]
@@ -185,7 +211,7 @@ jsonrpc_client!(pub struct XRPClient {
     enum:
 });
 
-#[test] 
-fn json_test() {
-    let _:LedgerInfo = serde_json::from_reader(std::fs::File::open("ledger.json").unwrap()).unwrap();
-}
+// #[test]
+// fn json_test() {
+//     let _:LedgerInfo = serde_json::from_reader(std::fs::File::open("ledger.json").unwrap()).unwrap();
+// }
