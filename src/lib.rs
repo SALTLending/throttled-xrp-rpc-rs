@@ -51,13 +51,28 @@ impl FromStr for Account {
 }
 
 #[derive(Serialize, Debug, Clone)]
-pub struct AccountParams<'a> {
+pub struct AccountInfoParams<'a> {
     pub account: &'a Account,
     pub strict: bool,
 
     #[serde(flatten)]
     pub ledger_index: LedgerIndex,
     pub queue: bool,
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub struct AccountTxParams<'a, 'b> {
+    pub account: &'a Account,
+    pub ledger_index_min: Option<i64>,
+    pub ledger_index_max: Option<i64>,
+    pub ledger_hash: Option<&'b str>,
+
+    #[serde(flatten)]
+    pub ledger_index: Option<LedgerIndex>,
+
+    pub binary: Option<bool>,
+    pub forward: Option<bool>,
+    pub limit: Option<u64>,
 }
 
 #[derive(Serialize)]
@@ -102,6 +117,18 @@ pub struct QueuedTransaction {
 }
 
 #[derive(Deserialize, Debug)]
+pub struct AccountTransaction {
+    pub meta: serde_json::Value,
+    pub tx: AccountTransactionTx,
+    pub validated: bool,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct AccountTransactionTx {
+    pub ledger_index: u64,
+}
+
+#[derive(Deserialize, Debug)]
 pub struct QueueData {
     pub auth_change_queued: bool,
     pub highest_sequence: BigDecimal,
@@ -128,6 +155,15 @@ pub struct AccountInfo {
 
     #[serde(flatten)]
     pub ledger_index: LedgerIndex,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct AccountTx {
+    pub account: Account,
+    pub ledger_index_min: i64,
+    pub ledger_index_max: i64,
+    pub limit: i64,
+    pub transactions: Vec<AccountTransaction>,
 }
 
 /**
@@ -240,12 +276,14 @@ pub struct LedgerInfo {
 
 jsonrpc_client!(pub struct XRPClient {
     single:
-        pub fn account_info(&self, params: AccountParams) -> Result<AccountInfo>;
+        pub fn account_info(&self, params: AccountInfoParams) -> Result<AccountInfo>;
+        pub fn account_tx(&self, params: AccountTxParams) -> Result<AccountTx>;
         pub fn ledger_info(&self, params: LedgerParams) -> Result<LedgerInfo>;
     enum:
 });
 
-// #[test]
-// fn json_test() {
-//     let _:LedgerInfo = serde_json::from_reader(std::fs::File::open("ledger.json").unwrap()).unwrap();
-// }
+#[test]
+fn json_test() {
+    let _: LedgerInfo =
+        serde_json::from_reader(std::fs::File::open("ledger.json").unwrap()).unwrap();
+}
