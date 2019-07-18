@@ -2,8 +2,18 @@ use serde_json::json;
 use serde_json::value::Value;
 use throttled_xrp_rpc::{Account, AccountInfoParams, AccountTxParams, LedgerIndex, XRPClient};
 
-// Used https://s1.ripple.com:51234/
-const URL: &'static str = "http://10.68.2.90:5005/";
+#[macro_use]
+extern crate lazy_static;
+
+const FALL_BACK_URL: &'static str = "https://s1.ripple.com:51234/";
+
+lazy_static! {
+    static ref URL: String = std::env::var("XRP_NODE").unwrap_or_else(|_| {
+        println!("Falling back for the url to {:?}", FALL_BACK_URL);
+        FALL_BACK_URL.into()
+    });
+}
+
 #[test]
 fn account_info_tests() {
     let bitpay_account_id: Account = "r9HwsqBnAUN4nF6nDqxd4sgP8DrDnDcZP3".parse().unwrap();
@@ -18,7 +28,7 @@ fn account_info_tests() {
         queue: true,
     };
     let raw_response = client
-        .post(URL.clone())
+        .post(&URL.clone())
         .json(&json!({
         "method": "account_info",
         "params": [
@@ -28,8 +38,8 @@ fn account_info_tests() {
         .send()
         .unwrap()
         .json::<Value>();
-    let account_response =
-        XRPClient::new(URL.into(), None, None, 0, 0, 0).account_info(account_params.clone());
+    let account_response = XRPClient::new(URL.clone().into(), None, None, 0, 0, 0)
+        .account_info(account_params.clone());
     assert!(
         account_response.is_ok(),
         "Getting back an error {:?} from the server given the input {:?}, raw was {:?}",
@@ -47,7 +57,7 @@ fn account_info_tests() {
         queue: false,
     };
     let raw_response = client
-        .post(URL.clone())
+        .post(&URL.clone())
         .json(&json!({
         "method": "account_info",
         "params": [
@@ -57,8 +67,8 @@ fn account_info_tests() {
         .send()
         .unwrap()
         .json::<Value>();
-    let account_response =
-        XRPClient::new(URL.into(), None, None, 0, 0, 0).account_info(account_params.clone());
+    let account_response = XRPClient::new(URL.clone().into(), None, None, 0, 0, 0)
+        .account_info(account_params.clone());
     assert!(
         account_response.is_ok(),
         "Getting back an error {:?} from the server given the input {:?}, raw was {:?}",
@@ -86,7 +96,7 @@ fn account_tx_test() {
         limit: Some(2),
     };
     let raw_response = client
-        .post(URL.clone())
+        .post(&URL.clone())
         .json(&json!({
         "method": "account_tx",
         "params": [
@@ -97,7 +107,7 @@ fn account_tx_test() {
         .unwrap()
         .json::<Value>();
     let account_tx =
-        XRPClient::new(URL.into(), None, None, 0, 0, 0).account_tx(account_params.clone());
+        XRPClient::new(URL.clone().into(), None, None, 0, 0, 0).account_tx(account_params.clone());
     assert!(
         account_tx.is_ok(),
         "Getting back an error {:?} from the server given the input {:?}, raw was {:?}",
