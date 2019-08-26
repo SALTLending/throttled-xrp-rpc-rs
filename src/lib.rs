@@ -76,7 +76,7 @@ pub struct AccountTxParams<'a, 'b> {
 }
 
 #[derive(Serialize)]
-pub struct LedgerParams {
+pub struct LedgerInfoParams {
     pub ledger_hash: Option<String>,
     pub ledger_index: Option<String>,
     pub full: Option<bool>,
@@ -270,6 +270,7 @@ pub struct LedgerInfo {
     pub ledger: NestedLedgerInfo,
     pub ledger_hash: String,
     pub ledger_index: BigDecimal,
+    pub transactions: Option<Vec<TransactionInfo>>,
     pub status: String,
     pub validated: bool,
 }
@@ -278,7 +279,7 @@ jsonrpc_client!(pub struct XRPClient {
     single:
         pub fn account_info(&self, params: AccountInfoParams) -> Result<AccountInfo>;
         pub fn account_tx(&self, params: AccountTxParams) -> Result<AccountTx>;
-        pub fn ledger_info(&self, params: LedgerParams) -> Result<LedgerInfo>;
+        pub fn ledger(&self, params: LedgerInfoParams) -> Result<LedgerInfo>;
     enum:
 });
 
