@@ -191,6 +191,7 @@ pub struct PathInfo {
 
 #[derive(Deserialize)]
 pub struct FinalFieldInfo {
+    pub Account: Option<String>,
     pub Balance: Option<Balance>,
     pub Flags: isize,
     pub OwnerCount: Option<BigDecimal>,
