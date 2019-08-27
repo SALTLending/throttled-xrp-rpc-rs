@@ -10,7 +10,6 @@ documentation = "http://docs.rs/throttled_xrp_rpc/"
 description = "Throttled XRP RPC API client for Rust."
 edition = "2018"
 
-
 [dependencies]
 throttled_json_rpc = "0.0.1"
 failure = "0.1.5"

@@ -78,7 +78,7 @@ pub struct AccountTxParams<'a, 'b> {
 #[derive(Serialize)]
 pub struct LedgerInfoParams {
     pub ledger_hash: Option<String>,
-    pub ledger_index: Option<String>,
+    pub ledger_index: Option<LedgerIndex>,
     pub full: Option<bool>,
     pub accounts: Option<bool>,
     pub transactions: Option<bool>,
