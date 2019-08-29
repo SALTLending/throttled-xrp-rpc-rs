@@ -6,7 +6,7 @@ extern crate throttled_json_rpc;
 use bigdecimal::BigDecimal;
 use std::str::FromStr;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
 pub enum Balance {
     XRP(BigDecimal),
@@ -75,9 +75,10 @@ pub struct AccountTxParams<'a, 'b> {
     pub limit: Option<u64>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct LedgerInfoParams {
     pub ledger_hash: Option<String>,
+    #[serde(flatten)]
     pub ledger_index: Option<LedgerIndex>,
     pub full: Option<bool>,
     pub accounts: Option<bool>,
@@ -125,7 +126,8 @@ pub struct AccountTransaction {
 
 #[derive(Deserialize, Debug)]
 pub struct AccountTransactionTx {
-    pub ledger_index: u64,
+    #[serde(flatten)]
+    pub ledger_index: LedgerIndex,
 }
 
 #[derive(Deserialize, Debug)]
@@ -148,7 +150,7 @@ pub enum LedgerIndex {
 
 #[derive(Deserialize, Debug)]
 pub struct AccountInfo {
-    pub account_data: AccountData,
+    pub account_data: Option<AccountData>,
     pub queue_data: Option<LaziedQueueData>,
     pub status: String,
     pub validated: Option<bool>,
@@ -180,7 +182,7 @@ pub struct LaziedQueueData {
     pub txn_count: Option<BigDecimal>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct PathInfo {
     pub currency: String,
     pub issuer: Option<String>,
@@ -189,7 +191,7 @@ pub struct PathInfo {
     pub type_hex: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct FinalFieldInfo {
     pub Account: Option<String>,
     pub Balance: Option<Balance>,
@@ -198,13 +200,13 @@ pub struct FinalFieldInfo {
     pub Sequence: Option<BigDecimal>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct PreviousFieldInfo {
     pub Balance: Option<Balance>,
     pub Sequence: Option<BigDecimal>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct ModifiedNodeInfo {
     pub FinalFields: FinalFieldInfo,
     pub PreviousFields: Option<PreviousFieldInfo>, // is this really optional ???
@@ -214,19 +216,19 @@ pub struct ModifiedNodeInfo {
     pub PreviousTxnLgrSeq: Option<BigDecimal>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct AffectedNodeInfo {
     pub ModifiedNode: Option<ModifiedNodeInfo>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct MetaTxInfo {
     pub AffectedNodes: Vec<AffectedNodeInfo>,
     pub TransactionIndex: BigDecimal,
     pub TransactionResult: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct TransactionInfo {
     pub Account: String,
     pub Amount: Option<Balance>,
@@ -245,7 +247,7 @@ pub struct TransactionInfo {
     pub validated: Option<bool>, //option of a bool???
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct NestedLedgerInfo {
     pub accepted: bool,
     pub account_hash: String,
@@ -256,7 +258,8 @@ pub struct NestedLedgerInfo {
     pub closed: bool,
     pub hash: String,
     pub ledger_hash: String,
-    pub ledger_index: String,
+    #[serde(flatten)]
+    pub ledger_index: LedgerIndex,
     pub parent_close_time: BigDecimal,
     pub parent_hash: String,
     pub seqNum: String,
@@ -266,11 +269,12 @@ pub struct NestedLedgerInfo {
     pub transactions: Option<Vec<TransactionInfo>>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct LedgerInfo {
-    pub ledger: NestedLedgerInfo,
-    pub ledger_hash: String,
-    pub ledger_index: BigDecimal,
+    pub ledger: Option<NestedLedgerInfo>,
+    pub ledger_hash: Option<String>,
+    #[serde(flatten)]
+    pub ledger_index: LedgerIndex,
     pub transactions: Option<Vec<TransactionInfo>>,
     pub status: String,
     pub validated: bool,

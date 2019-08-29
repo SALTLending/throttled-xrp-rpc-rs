@@ -1,5 +1,6 @@
 use serde_json::json;
 use serde_json::value::Value;
+use throttled_xrp_rpc::LedgerInfoParams;
 use throttled_xrp_rpc::{Account, AccountInfoParams, AccountTxParams, LedgerIndex, XRPClient};
 
 #[macro_use]
@@ -71,7 +72,7 @@ fn account_info_tests() {
         .account_info(account_params.clone());
     assert!(
         account_response.is_ok(),
-        "Getting back an error {:?} from the server given the input {:?}, raw was {:?}",
+        "Getting back an error {:#?} from the server given the input {:#?}, raw was {:#?}",
         account_response,
         serde_json::to_string(&account_params),
         raw_response
@@ -110,9 +111,48 @@ fn account_tx_test() {
         XRPClient::new(URL.clone().into(), None, None, 0, 0, 0).account_tx(account_params.clone());
     assert!(
         account_tx.is_ok(),
-        "Getting back an error {:?} from the server given the input {:?}, raw was {:?}",
+        "Getting back an error {:#?} from the server given the input {:#?}, raw was {:#?}",
         account_tx,
         serde_json::to_string(&account_params),
+        raw_response
+    );
+}
+
+#[test]
+fn account_ledger_test() {
+    let client = reqwest::Client::new();
+
+    let ledger_params = LedgerInfoParams {
+        ledger_hash: None,
+        ledger_index: Some(LedgerIndex::StrValue {
+            ledger_index: "validated".into(),
+        }),
+        full: Some(false),
+        accounts: Some(false),
+        transactions: Some(false),
+        expand: Some(false),
+        owner_funds: Some(false),
+        binary: None,
+        queue: None,
+    };
+    let raw_response = client
+        .post(&URL.clone())
+        .json(&json!({
+        "method": "ledger",
+        "params": [
+            ledger_params
+        ]
+        }))
+        .send()
+        .unwrap()
+        .json::<Value>();
+    let ledger =
+        XRPClient::new(URL.clone().into(), None, None, 0, 0, 0).ledger(ledger_params.clone());
+    assert!(
+        ledger.is_ok(),
+        "Getting back an error {:#?} from the server given the input {:#?}, raw was {:#?}",
+        ledger,
+        serde_json::to_string(&ledger_params),
         raw_response
     );
 }
