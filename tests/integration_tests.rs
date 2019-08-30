@@ -1,3 +1,4 @@
+use num_traits::cast::ToPrimitive;
 use serde_json::json;
 use serde_json::value::Value;
 use throttled_xrp_rpc::LedgerInfoParams;
@@ -49,11 +50,24 @@ fn account_info_tests() {
         raw_response
     );
 
+    let new_index: i64 = match account_response.unwrap().ledger_index {
+        LedgerIndex::Number { ledger_index } => ledger_index,
+        LedgerIndex::Current {
+            ledger_current_index,
+        } => ledger_current_index
+            .to_i64()
+            .expect("Converting ledger current index into i64")
+            .into(),
+        a => panic!("Expecting that the type is Number and is instead {:?}", a),
+    }
+    .as_i64()
+    .expect("Unwrap of Number")
+        - 5;
     let account_params = AccountInfoParams {
         account: &bitpay_account_id,
         strict: false,
         ledger_index: LedgerIndex::Number {
-            ledger_index: 48694757.into(),
+            ledger_index: new_index.into(),
         },
         queue: false,
     };
