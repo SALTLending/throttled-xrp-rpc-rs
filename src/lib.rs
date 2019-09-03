@@ -275,7 +275,6 @@ pub struct LedgerInfo {
     pub ledger_hash: Option<String>,
     #[serde(flatten)]
     pub ledger_index: LedgerIndex,
-    pub transactions: Option<Vec<TransactionInfo>>,
     pub status: String,
     pub validated: bool,
 }
