@@ -293,3 +293,17 @@ fn json_test() {
     let _: LedgerInfo =
         serde_json::from_reader(std::fs::File::open("ledger.json").unwrap()).unwrap();
 }
+
+#[test]
+fn json_ledger_test() {
+    use serde_json::json;
+    #[derive(Deserialize)]
+    struct RpcResponse<T> {
+        pub result: Option<T>,
+        pub error: Option<serde_json::Value>,
+        pub id: Option<usize>,
+    }
+    let test_data = json!({"result":{"ledger":{"accepted":true,"account_hash":"98D6F011D7A2477895D94DE7A32CD9A6410234D647B5304B0E225DDDAA4C7C0A","close_flags":0,"close_time":620858931,"close_time_human":"2019-Sep-03 20:48:51.000000000","close_time_resolution":10,"closed":true,"hash":"306E5B4D388C94E75CAB9B9C62D599B054F23DF19E18D1D52C5F92423615124B","ledger_hash":"306E5B4D388C94E75CAB9B9C62D599B054F23DF19E18D1D52C5F92423615124B","ledger_index":"105499","parent_close_time":620858930,"parent_hash":"8DA15AC70003D22CDC7756D471908C1E95665B02C475DAC77614EFEE4603FF89","seqNum":"105499","totalCoins":"99999999546484916","total_coins":"99999999546484916","transaction_hash":"254958D820D8B1020D5A9FCBE3EDD994AD51859E01EBAFE7BDF056ED9CBF8597"},"ledger_hash":"306E5B4D388C94E75CAB9B9C62D599B054F23DF19E18D1D52C5F92423615124B","ledger_index":105499,"status":"success","validated":true}});
+
+    serde_json::from_value::<RpcResponse<LedgerInfo>>(test_data).expect("ledger");
+}
