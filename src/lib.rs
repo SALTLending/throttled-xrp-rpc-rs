@@ -25,21 +25,6 @@ pub enum Balance {
 */
 pub struct Account(String);
 
-#[derive(Deserialize, Debug)]
-#[serde(untagged)]
-pub enum BiggDecimal {
-    BigDecimal(String),
-    Number(serde_json::Number),
-}
-impl From<BiggDecimal> for BigDecimal {
-    fn from(value: BiggDecimal) -> BigDecimal {
-        match value {
-            BiggDecimal::BigDecimal(x) => panic!(),
-            BiggDecimal::Number(x) => panic!(),
-        }
-    }
-}
-
 fn account_validate(s: &str) -> Result<String, String> {
     const MIN_LENGTH: usize = 25;
     const MAX_LENGTH: usize = 35;
@@ -112,24 +97,24 @@ pub enum LedgerEntryType {
 #[derive(Deserialize, Debug)]
 pub struct AccountData {
     pub Account: String,
-    pub Balance: BiggDecimal,
-    pub Flags: BiggDecimal,
+    pub Balance: BigDecimal,
+    pub Flags: BigDecimal,
     pub LedgerEntryType: LedgerEntryType,
-    pub OwnerCount: BiggDecimal,
+    pub OwnerCount: BigDecimal,
     pub PreviousTxnID: String,
-    pub PreviousTxnLgrSeq: BiggDecimal,
-    pub Sequence: BiggDecimal,
+    pub PreviousTxnLgrSeq: BigDecimal,
+    pub Sequence: BigDecimal,
     pub index: String,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct QueuedTransaction {
-    pub LastLedgerSequence: Option<BiggDecimal>,
+    pub LastLedgerSequence: Option<BigDecimal>,
     pub auth_change: bool,
-    pub fee: BiggDecimal,
-    pub fee_level: BiggDecimal,
-    pub max_spend_drops: BiggDecimal,
-    pub seq: BiggDecimal,
+    pub fee: BigDecimal,
+    pub fee_level: BigDecimal,
+    pub max_spend_drops: BigDecimal,
+    pub seq: BigDecimal,
 }
 
 #[derive(Deserialize, Debug)]
@@ -148,11 +133,11 @@ pub struct AccountTransactionTx {
 #[derive(Deserialize, Debug)]
 pub struct QueueData {
     pub auth_change_queued: bool,
-    pub highest_sequence: BiggDecimal,
-    pub lowest_sequence: BiggDecimal,
-    pub max_spend_drops_total: BiggDecimal,
+    pub highest_sequence: BigDecimal,
+    pub lowest_sequence: BigDecimal,
+    pub max_spend_drops_total: BigDecimal,
     pub transactions: Vec<QueuedTransaction>,
-    pub txn_count: BiggDecimal,
+    pub txn_count: BigDecimal,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -190,11 +175,11 @@ pub struct AccountTx {
 #[derive(Deserialize, Debug)]
 pub struct LaziedQueueData {
     pub auth_change_queued: Option<bool>,
-    pub highest_sequence: Option<BiggDecimal>,
-    pub lowest_sequence: Option<BiggDecimal>,
-    pub max_spend_drops_total: Option<BiggDecimal>,
+    pub highest_sequence: Option<BigDecimal>,
+    pub lowest_sequence: Option<BigDecimal>,
+    pub max_spend_drops_total: Option<BigDecimal>,
     pub transactions: Option<Vec<QueuedTransaction>>,
-    pub txn_count: Option<BiggDecimal>,
+    pub txn_count: Option<BigDecimal>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -202,7 +187,7 @@ pub struct PathInfo {
     pub currency: String,
     pub issuer: Option<String>,
     #[serde(rename = "type")]
-    pub currency_type: BiggDecimal,
+    pub currency_type: BigDecimal,
     pub type_hex: String,
 }
 
@@ -211,14 +196,14 @@ pub struct FinalFieldInfo {
     pub Account: Option<String>,
     pub Balance: Option<Balance>,
     pub Flags: isize,
-    pub OwnerCount: Option<BiggDecimal>,
-    pub Sequence: Option<BiggDecimal>,
+    pub OwnerCount: Option<BigDecimal>,
+    pub Sequence: Option<BigDecimal>,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct PreviousFieldInfo {
     pub Balance: Option<Balance>,
-    pub Sequence: Option<BiggDecimal>,
+    pub Sequence: Option<BigDecimal>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -228,7 +213,7 @@ pub struct ModifiedNodeInfo {
     pub LedgerEntryType: String,
     pub LedgerIndex: String,
     pub PreviousTxnID: Option<String>,
-    pub PreviousTxnLgrSeq: Option<BiggDecimal>,
+    pub PreviousTxnLgrSeq: Option<BigDecimal>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -239,7 +224,7 @@ pub struct AffectedNodeInfo {
 #[derive(Deserialize, Debug)]
 pub struct MetaTxInfo {
     pub AffectedNodes: Vec<AffectedNodeInfo>,
-    pub TransactionIndex: BiggDecimal,
+    pub TransactionIndex: BigDecimal,
     pub TransactionResult: String,
 }
 
@@ -248,11 +233,11 @@ pub struct TransactionInfo {
     pub Account: String,
     pub Amount: Option<Balance>,
     pub Destination: Option<String>,
-    pub Fee: BiggDecimal,
+    pub Fee: BigDecimal,
     pub Flags: isize,
     pub Paths: Option<Vec<Vec<PathInfo>>>,
     pub SendMax: Option<Balance>,
-    pub Sequence: BiggDecimal,
+    pub Sequence: BigDecimal,
     pub SigningPubKey: String,
     pub TransactionType: String,
     pub TxnSignature: String,
@@ -267,19 +252,19 @@ pub struct NestedLedgerInfo {
     pub accepted: bool,
     pub account_hash: String,
     pub close_flags: isize,
-    pub close_time: BiggDecimal,
+    pub close_time: BigDecimal,
     pub close_time_human: String,
-    pub close_time_resolution: BiggDecimal,
+    pub close_time_resolution: BigDecimal,
     pub closed: bool,
     pub hash: String,
     pub ledger_hash: String,
     #[serde(flatten)]
     pub ledger_index: LedgerIndex,
-    pub parent_close_time: BiggDecimal,
+    pub parent_close_time: BigDecimal,
     pub parent_hash: String,
     pub seqNum: String,
     pub totalCoins: String,
-    pub total_coins: BiggDecimal,
+    pub total_coins: BigDecimal,
     pub transaction_hash: String,
     pub transactions: Option<Vec<TransactionInfo>>,
 }
