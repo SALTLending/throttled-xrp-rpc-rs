@@ -29,7 +29,7 @@ pub struct Account(String);
 #[serde(untagged)]
 pub enum BiggDecimal {
     BigDecimal(String),
-    Number(serde_json::Number),,
+    Number(serde_json::Number),
 }
 impl From<BiggDecimal> for BigDecimal {
     fn from(value: BiggDecimal) -> BigDecimal {
