@@ -29,15 +29,13 @@ pub struct Account(String);
 #[serde(untagged)]
 pub enum BiggDecimal {
     BigDecimal(String),
-    I64(i64),
-    F64(f64),
+    Number(serde_json::Number),,
 }
 impl From<BiggDecimal> for BigDecimal {
     fn from(value: BiggDecimal) -> BigDecimal {
         match value {
             BiggDecimal::BigDecimal(x) => panic!(),
-            BiggDecimal::I64(x) => x.into(),
-            BiggDecimal::F64(x) => x.into(),
+            BiggDecimal::Number(x) => x.into(),
         }
     }
 }
