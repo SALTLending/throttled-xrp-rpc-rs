@@ -35,7 +35,7 @@ impl From<BiggDecimal> for BigDecimal {
     fn from(value: BiggDecimal) -> BigDecimal {
         match value {
             BiggDecimal::BigDecimal(x) => panic!(),
-            BiggDecimal::Number(x) => x.into(),
+            BiggDecimal::Number(x) => panic!(),
         }
     }
 }
