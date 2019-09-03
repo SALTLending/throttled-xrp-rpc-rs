@@ -134,8 +134,6 @@ fn account_tx_test() {
 
 #[test]
 fn account_ledger_test() {
-    let client = reqwest::Client::new();
-
     let ledger_params = LedgerInfoParams {
         ledger_hash: None,
         ledger_index: Some(LedgerIndex::StrValue {
@@ -149,24 +147,19 @@ fn account_ledger_test() {
         binary: None,
         queue: None,
     };
-    let raw_response = client
-        .post(&URL.clone())
-        .json(&json!({
-        "method": "ledger",
-        "params": [
-            ledger_params
-        ]
-        }))
-        .send()
-        .unwrap()
-        .json::<Value>();
-    let ledger =
-        XRPClient::new(URL.clone().into(), None, None, 0, 0, 0).ledger(ledger_params.clone());
+    let ledger = XRPClient::new(
+        "https://s.altnet.rippletest.net:51234".into(),
+        None,
+        None,
+        0,
+        0,
+        0,
+    )
+    .ledger(ledger_params.clone());
     assert!(
         ledger.is_ok(),
-        "Getting back an error {:#?} from the server given the input {:#?}, raw was {:#?}",
+        "Getting back an error {:#?} from the server given the input {:#?}",
         ledger,
         serde_json::to_string(&ledger_params),
-        raw_response
     );
 }
