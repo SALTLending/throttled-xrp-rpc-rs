@@ -208,7 +208,7 @@ pub struct PreviousFieldInfo {
 
 #[derive(Deserialize, Debug)]
 pub struct ModifiedNodeInfo {
-    pub FinalFields: FinalFieldInfo,
+    pub FinalFields: Option<FinalFieldInfo>,
     pub PreviousFields: Option<PreviousFieldInfo>, // is this really optional ???
     pub LedgerEntryType: String,
     pub LedgerIndex: String,
