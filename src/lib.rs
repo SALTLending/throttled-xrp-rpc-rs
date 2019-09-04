@@ -98,7 +98,7 @@ pub enum LedgerEntryType {
 pub struct AccountData {
     pub Account: String,
     pub Balance: BigDecimal,
-    pub Flags: BigDecimal,
+    pub Flags: Option<BigDecimal>,
     pub LedgerEntryType: LedgerEntryType,
     pub OwnerCount: BigDecimal,
     pub PreviousTxnID: String,
@@ -195,7 +195,7 @@ pub struct PathInfo {
 pub struct FinalFieldInfo {
     pub Account: Option<String>,
     pub Balance: Option<Balance>,
-    pub Flags: isize,
+    pub Flags: Option<isize>,
     pub OwnerCount: Option<BigDecimal>,
     pub Sequence: Option<BigDecimal>,
 }
@@ -234,7 +234,7 @@ pub struct TransactionInfo {
     pub Amount: Option<Balance>,
     pub Destination: Option<String>,
     pub Fee: BigDecimal,
-    pub Flags: isize,
+    pub Flags: Option<isize>,
     pub Paths: Option<Vec<Vec<PathInfo>>>,
     pub SendMax: Option<Balance>,
     pub Sequence: BigDecimal,
@@ -242,7 +242,6 @@ pub struct TransactionInfo {
     pub TransactionType: String,
     pub TxnSignature: String,
     pub hash: String,
-    pub LedgerIndex: Option<String>,
     pub metaData: MetaTxInfo,
     pub validated: Option<bool>, //option of a bool???
 }
@@ -295,13 +294,40 @@ fn json_test() {
 
 #[test]
 fn json_ledger_test() {
-    use serde_json::json;
     #[derive(Deserialize)]
     struct RpcResponse<T> {
         pub result: Option<T>,
         pub error: Option<serde_json::Value>,
         pub id: Option<usize>,
     }
-    let test_data:RpcResponse<LedgerInfo> = serde_json::from_str(r#"{"result":{"ledger":{"accepted":true,"account_hash":"CFA12FBAFC585D54858874ADACB1003CB4218B010CF5F8AB4C4984B194E95B4B","close_flags":0,"close_time":620860251,"close_time_human":"2019-Sep-03 21:10:51.000000000","close_time_resolution":10,"closed":true,"hash":"30BC3B59A2DCB4BC402637A1DEE3F22C6AC4D09E2CDFCAE8C84F11D7E6E251F5","ledger_hash":"30BC3B59A2DCB4BC402637A1DEE3F22C6AC4D09E2CDFCAE8C84F11D7E6E251F5","ledger_index":"105938","parent_close_time":620860250,"parent_hash":"197B5016B33A79CECA4AA704B534D5999A9674FAD9CBDD82309835D7A784A35F","seqNum":"105938","totalCoins":"99999999522468910","total_coins":"99999999522468910","transaction_hash":"55771C3FB148C470D36B4AE4F91D402F60C39920649C9D2C3E1829104E82654F"},"ledger_hash":"30BC3B59A2DCB4BC402637A1DEE3F22C6AC4D09E2CDFCAE8C84F11D7E6E251F5","ledger_index":105938,"status":"success","validated":true}}"#).unwrap();
-    // serde_json::from_value::<RpcResponse<LedgerInfo>>(test_data).expect("ledger");
+    let _test_data: RpcResponse<LedgerInfo> = serde_json::from_str(
+        r#"{
+  "result": {
+    "ledger": {
+      "accepted": true,
+      "account_hash": "CFA12FBAFC585D54858874ADACB1003CB4218B010CF5F8AB4C4984B194E95B4B",
+      "close_flags": 0,
+      "close_time": 620860251,
+      "close_time_human": "2019-Sep-03 21:10:51.000000000",
+      "close_time_resolution": 10,
+      "closed": true,
+      "hash": "30BC3B59A2DCB4BC402637A1DEE3F22C6AC4D09E2CDFCAE8C84F11D7E6E251F5",
+      "ledger_hash": "30BC3B59A2DCB4BC402637A1DEE3F22C6AC4D09E2CDFCAE8C84F11D7E6E251F5",
+      "ledger_index": "105938",
+      "parent_close_time": 620860250,
+      "parent_hash": "197B5016B33A79CECA4AA704B534D5999A9674FAD9CBDD82309835D7A784A35F",
+      "seqNum": "105938",
+      "totalCoins": "99999999522468910",
+      "total_coins": "99999999522468910",
+      "transaction_hash": "55771C3FB148C470D36B4AE4F91D402F60C39920649C9D2C3E1829104E82654F"
+    },
+    "ledger_hash": "30BC3B59A2DCB4BC402637A1DEE3F22C6AC4D09E2CDFCAE8C84F11D7E6E251F5",
+    "ledger_index": 105938,
+    "status": "success",
+    "validated": true
+  }
+}
+"#,
+    )
+    .unwrap();
 }

@@ -40,7 +40,7 @@ fn account_info_tests() {
         .send()
         .unwrap()
         .json::<Value>();
-    let account_response = XRPClient::new(URL.clone().into(), None, None, 0, 0, 0)
+    let account_response = XRPClient::new(URL.clone().into(), None, None, 0, 0.0, 0)
         .account_info(account_params.clone());
     assert!(
         account_response.is_ok(),
@@ -82,7 +82,7 @@ fn account_info_tests() {
         .send()
         .unwrap()
         .json::<Value>();
-    let account_response = XRPClient::new(URL.clone().into(), None, None, 0, 0, 0)
+    let account_response = XRPClient::new(URL.clone().into(), None, None, 0, 0.0, 0)
         .account_info(account_params.clone());
     assert!(
         account_response.is_ok(),
@@ -121,8 +121,8 @@ fn account_tx_test() {
         .send()
         .unwrap()
         .json::<Value>();
-    let account_tx =
-        XRPClient::new(URL.clone().into(), None, None, 0, 0, 0).account_tx(account_params.clone());
+    let account_tx = XRPClient::new(URL.clone().into(), None, None, 0, 0.0, 0)
+        .account_tx(account_params.clone());
     assert!(
         account_tx.is_ok(),
         "Getting back an error {:#?} from the server given the input {:#?}, raw was {:#?}",
@@ -152,7 +152,7 @@ fn account_ledger_test() {
         None,
         None,
         0,
-        0,
+        0.0,
         0,
     )
     .ledger(ledger_params.clone());
