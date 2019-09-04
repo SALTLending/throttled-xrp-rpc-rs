@@ -184,7 +184,7 @@ pub struct LaziedQueueData {
 
 #[derive(Deserialize, Debug)]
 pub struct PathInfo {
-    pub currency: String,
+    pub currency: Option<String>,
     pub issuer: Option<String>,
     #[serde(rename = "type")]
     pub currency_type: BigDecimal,
