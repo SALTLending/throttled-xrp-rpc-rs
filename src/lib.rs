@@ -240,7 +240,7 @@ pub struct TransactionInfo {
     pub Sequence: BigDecimal,
     pub SigningPubKey: String,
     pub TransactionType: String,
-    pub TxnSignature: String,
+    pub TxnSignature: Option<String>,
     pub hash: String,
     pub metaData: MetaTxInfo,
     pub validated: Option<bool>, //option of a bool???
