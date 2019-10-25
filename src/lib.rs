@@ -258,7 +258,7 @@ pub struct TransactionInfo {
     pub TransactionType: String,
     pub TxnSignature: Option<String>,
     pub hash: String,
-    pub metaData: MetaTxInfo,
+    pub metaData: Option<MetaTxInfo>,
     pub validated: Option<bool>, //option of a bool???
 }
 
