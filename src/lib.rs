@@ -192,7 +192,7 @@ pub struct PathInfo {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct FinalFieldInfo {
+pub struct FieldInfo {
     pub Account: Option<String>,
     pub Balance: Option<Balance>,
     pub Flags: Option<isize>,
@@ -208,8 +208,8 @@ pub struct PreviousFieldInfo {
 
 #[derive(Deserialize, Debug)]
 pub struct ModifiedNodeInfo {
-    pub FinalFields: Option<FinalFieldInfo>,
-    pub PreviousFields: Option<PreviousFieldInfo>, // is this really optional ???
+    pub FinalFields: Option<FieldInfo>,
+    pub PreviousFields: Option<FieldInfo>, // is this really optional ???
     pub LedgerEntryType: String,
     pub LedgerIndex: String,
     pub PreviousTxnID: Option<String>,
@@ -217,8 +217,24 @@ pub struct ModifiedNodeInfo {
 }
 
 #[derive(Deserialize, Debug)]
+pub struct CreatedNodeInfo {
+    pub LedgerEntryType: String,
+    pub LedgerIndex: String,
+    pub NewFields: Option<FieldInfo>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct DeletedNodeInfo {
+    pub LedgerEntryType: String,
+    pub LedgerIndex: String,
+    pub FinalFields: Option<FieldInfo>,
+}
+
+#[derive(Deserialize, Debug)]
 pub struct AffectedNodeInfo {
     pub ModifiedNode: Option<ModifiedNodeInfo>,
+    pub CreatedNode: Option<CreatedNodeInfo>,
+    pub DeletedNode: Option<DeletedNodeInfo>,
 }
 
 #[derive(Deserialize, Debug)]
