@@ -293,6 +293,7 @@ pub struct LedgerInfo {
     pub status: String,
     pub validated: bool,
 }
+#[derive(Clone, Debug)]
 pub struct XRPClient {
     request_batcher: ReqBatcher,
 }
