@@ -1,10 +1,10 @@
 #![allow(non_snake_case)]
 
-#[macro_use]
-extern crate throttled_json_rpc;
-
+use anyhow::Result;
 use bigdecimal::BigDecimal;
+use serde::{Deserialize, Serialize};
 use std::str::FromStr;
+use throttled_json_rpc::{ClientAuth, ClientOptions, ReqBatcher, RPS};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
@@ -31,7 +31,7 @@ fn account_validate(s: &str) -> Result<String, String> {
     if s.len() < MIN_LENGTH {
         return Err(format!("{:?} is shorter than {} chars ", s, MIN_LENGTH));
     }
-    if let Some(first_char) = s.chars().nth(0) {
+    if let Some(first_char) = s.chars().next() {
         if first_char != 'r' {
             return Err(format!("{:?} does not start with r", s));
         }
@@ -46,7 +46,7 @@ impl FromStr for Account {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        account_validate(s).map(|account| Account(account))
+        account_validate(s).map(Account)
     }
 }
 
@@ -293,14 +293,53 @@ pub struct LedgerInfo {
     pub status: String,
     pub validated: bool,
 }
-
-jsonrpc_client!(pub struct XRPClient {
-    single:
-        pub fn account_info(&self, params: AccountInfoParams) -> Result<AccountInfo>;
-        pub fn account_tx(&self, params: AccountTxParams) -> Result<AccountTx>;
-        pub fn ledger(&self, params: LedgerInfoParams) -> Result<LedgerInfo>;
-    enum:
-});
+pub struct XRPClient {
+    request_batcher: ReqBatcher,
+}
+impl XRPClient {
+    pub fn new(
+        uri: String,
+        user: Option<String>,
+        pass: Option<String>,
+        max_concurrency: usize,
+        rps: f64,
+        max_batch_size: usize,
+    ) -> Result<Self> {
+        Ok(XRPClient {
+            request_batcher: ReqBatcher::new(ClientOptions {
+                uri,
+                batching: max_batch_size,
+                rps: RPS::new(rps)?,
+                concurrent: max_concurrency,
+                client_auth: user.map(|user| ClientAuth {
+                    user,
+                    password: pass,
+                }),
+            }),
+        })
+    }
+    pub async fn account_info(&mut self, params: &AccountInfoParams<'_>) -> Result<AccountInfo> {
+        self.request_batcher
+            .request(
+                "account_info".to_string(),
+                vec![serde_json::to_value(params)?],
+            )
+            .await
+    }
+    pub async fn account_tx(&mut self, params: &AccountTxParams<'_, '_>) -> Result<AccountTx> {
+        self.request_batcher
+            .request(
+                "account_tx".to_string(),
+                vec![serde_json::to_value(params)?],
+            )
+            .await
+    }
+    pub async fn ledger(&mut self, params: &LedgerInfoParams) -> Result<LedgerInfo> {
+        self.request_batcher
+            .request("ledger".to_string(), vec![serde_json::to_value(params)?])
+            .await
+    }
+}
 
 #[test]
 fn json_test() {
