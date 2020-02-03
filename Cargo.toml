@@ -11,7 +11,7 @@ description = "Throttled XRP RPC API client for Rust."
 edition = "2018"
 
 [dependencies]
-throttled_json_rpc = { rev = "95603dc2762f1f0e7f5743f0c5b97d42455d54ac", version = "=0.1.0", git = "https://github.com/SALTLending/throttled-json-rpc-rs"}
+throttled_json_rpc = { rev = "9a17dc1eec3f493505cbbd1b33479246d6256b7b", version = "=0.1.0", git = "https://github.com/SALTLending/throttled-json-rpc-rs"}
 anyhow = "1.0.*"
 reqwest = "0.10.*"
 serde = { version = "1.0.*", features = ["derive", ] }
