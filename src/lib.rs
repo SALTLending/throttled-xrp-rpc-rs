@@ -539,7 +539,8 @@ impl XRPClient {
             .await
     }
     /// This is the meat of the scanner, it gets the information of a block. See [1]
-    /// for the source of the documenation
+    /// for the source of the documenation. Can get the ledger height, good for knowing
+    /// the state of the scanner.
     ///
     /// 1: https://xrpl.org/ledger.html
     pub async fn ledger(&mut self, params: &LedgerInfoParams) -> Result<LedgerInfo> {
