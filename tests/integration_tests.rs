@@ -16,8 +16,8 @@ lazy_static! {
     });
 }
 
-#[test]
-fn account_info_tests() {
+#[tokio::test]
+async fn account_info_tests() {
     let bitpay_account_id: Account = "r9HwsqBnAUN4nF6nDqxd4sgP8DrDnDcZP3".parse().unwrap();
     let client = reqwest::Client::new();
 
@@ -38,10 +38,14 @@ fn account_info_tests() {
         ]
         }))
         .send()
+        .await
         .unwrap()
-        .json::<Value>();
-    let account_response = XRPClient::new(URL.clone().into(), None, None, 0, 0.0, 0)
-        .account_info(account_params.clone());
+        .json::<Value>()
+        .await;
+    let account_response = XRPClient::new(URL.clone(), None, None, 0, 0.0, 0)
+        .unwrap()
+        .account_info(&account_params)
+        .await;
     assert!(
         account_response.is_ok(),
         "Getting back an error {:?} from the server given the input {:?}, raw was {:?}",
@@ -80,10 +84,14 @@ fn account_info_tests() {
         ]
         }))
         .send()
+        .await
         .unwrap()
-        .json::<Value>();
-    let account_response = XRPClient::new(URL.clone().into(), None, None, 0, 0.0, 0)
-        .account_info(account_params.clone());
+        .json::<Value>()
+        .await;
+    let account_response = XRPClient::new(URL.clone(), None, None, 0, 0.0, 0)
+        .unwrap()
+        .account_info(&account_params)
+        .await;
     assert!(
         account_response.is_ok(),
         "Getting back an error {:#?} from the server given the input {:#?}, raw was {:#?}",
@@ -93,8 +101,8 @@ fn account_info_tests() {
     );
 }
 
-#[test]
-fn account_tx_test() {
+#[tokio::test]
+async fn account_tx_test() {
     let bitpay_account_id: Account = "r9HwsqBnAUN4nF6nDqxd4sgP8DrDnDcZP3".parse().unwrap();
     let client = reqwest::Client::new();
 
@@ -119,10 +127,14 @@ fn account_tx_test() {
         ]
         }))
         .send()
+        .await
         .unwrap()
-        .json::<Value>();
-    let account_tx = XRPClient::new(URL.clone().into(), None, None, 0, 0.0, 0)
-        .account_tx(account_params.clone());
+        .json::<Value>()
+        .await;
+    let account_tx = XRPClient::new(URL.clone(), None, None, 0, 0.0, 0)
+        .unwrap()
+        .account_tx(&account_params)
+        .await;
     assert!(
         account_tx.is_ok(),
         "Getting back an error {:#?} from the server given the input {:#?}, raw was {:#?}",
@@ -132,8 +144,8 @@ fn account_tx_test() {
     );
 }
 
-#[test]
-fn account_ledger_test() {
+#[tokio::test]
+async fn account_ledger_test() {
     let ledger_params = LedgerInfoParams {
         ledger_hash: None,
         ledger_index: Some(LedgerIndex::StrValue {
@@ -155,7 +167,9 @@ fn account_ledger_test() {
         0.0,
         0,
     )
-    .ledger(ledger_params.clone());
+    .unwrap()
+    .ledger(&ledger_params)
+    .await;
     assert!(
         ledger.is_ok(),
         "Getting back an error {:#?} from the server given the input {:#?}",
